@@ -1,0 +1,26 @@
+# Người viết: tieungao88
+cd /root
+# Lấy ra IP trong một file ( log_file )
+grep -E -o "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)" /var/log/http/ssl_access_log > ip.txt
+# Sắp xếp các IP theo thứ tự từ nhỏ tới lớn và xuất ra tổng số lần truy cập và số IP đã truy cập
+echo "Tong so lan truy cạp vao webserver: " $(cat ip.txt |cut -d ' ' -f 1 |sort |wc -l)
+echo "Cac IP da truy cap he thong: " $(cat ip.txt |cut -d ' ' -f 1 |sort |uniq | wc -l)
+# Đếm số lần truy cập của từng IP
+log_file=/root/ip.txt
+echo "So lan truy cap cua tung IP:"
+for ip in `cat $log_file |sort |uniq`;
+do
+	count=$(grep $ip $log_file | wc -l)
+	echo "$ip | $count"
+done
+# In ra các IP có số lần truy cập => 100
+log_file=/root/ip.txt
+echo "IP co luot truy cap >= 100:"
+for ip in `cat $log_file |sort |uniq`;
+do
+	count=$(grep $ip $log_file | wc -l)
+	if [ "$count" -ge "100" ]
+	then 
+	echo "$ip | $count"
+	fi
+done
